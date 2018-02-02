@@ -103,22 +103,18 @@ if (createNewModels) {
   # Neural Network
   print("Neural Network -> fit.nnet")
   set.seed(seed)
-  fit.nnet <- train(model, data = dataset_train, method = "nnet", metric = metric, preProc = c("center", "scale"), trControl = control)
-  listOfModels = c(listOfModels, fit.nnet)
+  #fit.nnet <- train(model, data = dataset_train, method = "nnet", metric = metric, preProc = c("center", "scale"), trControl = control)
+
   
   # Deep Neural Network
   print("Deep Neural Network -> fit.dnn")
   set.seed(seed)
-  fit.dnn <- train(model, data = dataset_train, method = "dnn", metric = metric, preProc = c("center", "scale"), trControl = control)
-  listOfModels = c(listOfModels, fit.nnet)
-  
-  
-  
-  
+  #fit.dnn <- train(model, data = dataset_train, method = "dnn", metric = metric, preProc = c("center", "scale"), trControl = control)
+
 
   listOfModels = list(glm = fit.glm, lda = fit.lda, qda = fit.qda, knn = fit.knn, 
                       rf = fit.rf, gbm = fit.gbm, svm = fit.svmRadial, nb = fit.nb, 
-                      glmnet = fit.glmnet, nnet = fit.nnet, dnn = fit.dnn)
+                      glmnet = fit.glmnet)#, nnet = fit.nnet, dnn = fit.dnn)
   
   results <- resamples(listOfModels)
 
