@@ -10,7 +10,7 @@ levels(dataset$label) <- c(0,1) #Rename levels to: 0=dislike 1=like
 
 
 #Controls
-trainRatio = 0.8 #Data ratio
+trainRatio = 0.98 #Data ratio
 k = 10 #K-fold cross validation
 r = 3  #Cross validation repeats
 
@@ -137,7 +137,7 @@ if (checkAllModelsAgainstValidation) {
     tempModelName <- paste0("fit.",i$method)
     assign("tempModelPred", predict(eval(parse(text = tempModelName)), dataset_eval[,1:13]))
     evalCorrect <- sum(tempModelPred == dataset_eval$label)
-    print(paste0(tempModelName, " evaluation: ", evalCorrect, "/",length(tempModelPredNum), " correct,  ",(evalCorrect/length(tempModelPredNum)*100),"%"))
+    print(paste0(tempModelName, " evaluation: ", evalCorrect, "/",length(tempModelPred), " correct,  ",(evalCorrect/length(tempModelPred)*100),"%"))
   }
 }
 
