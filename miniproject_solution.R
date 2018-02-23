@@ -15,7 +15,7 @@ createNewModels = TRUE #Calculate new models?
 printResults = TRUE #Print summary?
 plotResults = TRUE #Plot summary?
 checkAllModelsAgainstValidation = TRUE #Evaluate all models?
-seed <- 10 #Set seed 
+seed <- 1 #Set seed 
 
 set.seed(seed)
 
@@ -96,7 +96,7 @@ if (createNewModels) {
   fit.glmnet <- train(model, data = dataset_train, method = "glmnet", metric = metric, preProc = c("center", "scale"), trControl = control)
 
   
-  allLike <- rep(1,100)
+
   listOfModels = list(glm = fit.glm, lda = fit.lda, qda = fit.qda, knn = fit.knn, 
                       rf = fit.rf, gbm = fit.gbm, svm = fit.svmRadial, nb = fit.nb, 
                       glmnet = fit.glmnet)
@@ -128,6 +128,52 @@ if (checkAllModelsAgainstValidation) {
 }
 
 #Production prediction
-resultSongsToClassify <- predict(fit.rf, pred)
-print(resultSongsToClassify)
+#rf_prediction <- predict(fit.rf, pred)
+#gbm_prediction <- predict(fit.gbm, pred)
 
+
+#Manual Tuning
+
+tuneRF <- FALSE
+#Tuning RF
+if(tuneRF) {
+  set.seed(seed)
+  control <- trainControl(method="repeatedcv", number=10, repeats=3, search="grid")
+  tunegrid <- expand.grid(.mtry=c(1:13))
+  rf_tuned <- train(model, data=dataset_train, method="rf", metric=metric, tuneGrid=tunegrid, trControl=control)
+  print(rf_tuned)
+  plot(rf_tuned)
+}
+
+
+tuneGBM <- FALSE
+#Tuning RF
+if(tuneGBM) {
+  set.seed(seed)
+  control <- trainControl(method="repeatedcv", number=10, repeats=3, search="grid")
+  tunegridAll <-  expand.grid(interaction.depth = 1:4, 
+                          n.trees = (1:4)*50, 
+                          shrinkage = seq(0.01,0.2,0.01),
+                          n.minobsinnode = (1:10)*2)
+  
+  tunegrid <-  expand.grid(interaction.depth = 2, 
+                              n.trees = 50, 
+                              shrinkage = 0.1,
+                              n.minobsinnode = 1:20)
+  
+  gbm_tuned <- train(model, data=dataset_train, method="gbm", metric=metric, tuneGrid=tunegrid, trControl=control)
+  print(gbm_tuned)
+  plot(gbm_tuned)
+}
+
+
+tuneKNN <- FALSE
+#Tuning KNN
+if(tuneKNN) {
+  set.seed(seed)
+  control <- trainControl(method="repeatedcv", number=10, repeats=3, search="grid")
+  tunegrid <-  expand.grid(k = 1:20)
+  knn_tuned <- train(model, data=dataset_train, method="knn", metric=metric, preProc = c("center", "scale"), tuneGrid=tunegrid, trControl=control)
+  print(knn_tuned)
+  plot(knn_tuned)
+}
